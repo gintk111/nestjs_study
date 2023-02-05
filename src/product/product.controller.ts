@@ -1,7 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, HttpStatus } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
+  UseGuards
+} from "@nestjs/common";
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import JwtAuthenticationGuard from "../authentication/jwt-authentication.guard";
 
 @Controller('product')
 export class ProductController {
@@ -13,13 +25,14 @@ export class ProductController {
   }
 
   @Get()
+  @UseGuards(JwtAuthenticationGuard)
   findAll() {
     return this.productService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.productService.findOne(id);
   }
 
   @Patch(':id')
