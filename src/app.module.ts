@@ -25,4 +25,8 @@ import Product from "./product/product.entity";
   controllers: [],
   providers: [Timestamp],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer, ) {
+    consumer.apply(LogsMiddleware).forRoutes('*');
+  }
+}
