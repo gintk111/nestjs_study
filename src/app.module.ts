@@ -2,14 +2,15 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ProductModule } from './product/product.module';
 import { Timestamp } from './utils/scalart/timestamp.scalar';
 import LogsMiddleware from './utils/logs.middleware';
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "./user/user.entity";
-import { UserModule } from "./user/user.module";
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './user/user.entity';
+import { UserModule } from './user/user.module';
 import { AuthenticationModule } from './authentication/authentication.module';
-import Product from "./product/product.entity";
+import Product from './product/product.entity';
 
 @Module({
-  imports: [ProductModule,
+  imports: [
+    ProductModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -21,12 +22,13 @@ import Product from "./product/product.entity";
       synchronize: true,
     }),
     UserModule,
-    AuthenticationModule,],
+    AuthenticationModule,
+  ],
   controllers: [],
   providers: [Timestamp],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer, ) {
+  configure(consumer: MiddlewareConsumer) {
     consumer.apply(LogsMiddleware).forRoutes('*');
   }
 }

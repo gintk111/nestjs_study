@@ -1,15 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from "bcrypt";
 import { UserService } from "../user/user.service";
 import RegisterDto from "./dto/register.dto";
 import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AuthenticationService {
-
   constructor(
     private readonly userService: UserService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   public async register(registrationData: RegisterDto) {
@@ -17,12 +16,15 @@ export class AuthenticationService {
     try {
       const createdUser = await this.userService.create({
         ...registrationData,
-        password: hashedPassword
+        password: hashedPassword,
       });
       createdUser.password = undefined;
       return createdUser;
     } catch (error) {
-      throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -33,23 +35,35 @@ export class AuthenticationService {
       user.password = undefined;
       return user;
     } catch (error) {
-      throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Wrong credentials provided',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
-  private async verifyPassword(plainTextPassword: string, hashedPassword: string) {
+  private async verifyPassword(
+    plainTextPassword: string,
+    hashedPassword: string,
+  ) {
     const isPasswordMatching = await bcrypt.compare(
       plainTextPassword,
-      hashedPassword
+      hashedPassword,
     );
     if (!isPasswordMatching) {
-      throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Wrong credentials provided',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
-  public getCookieWithJwtToken(userId: number) {
+  public getJwtToken(userId: number) {
     const payload: TokenPayload = { userId };
-    const token = this.jwtService.sign(payload);
-    return `Bearer=${token}; HttpOnly; Path=/; Max-Age=60`;
+    return this.jwtService.sign(payload);
+  }
+
+  public getCookieForLogOut() {
+    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
   }
 }

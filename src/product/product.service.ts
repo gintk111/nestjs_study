@@ -1,18 +1,17 @@
-import { Injectable } from "@nestjs/common";
-import { CreateProductDto } from "./dto/create-product.dto";
-import { UpdateProductDto } from "./dto/update-product.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import Product from "./product.entity";
-import ProductEntity from "./product.entity";
-import ProductNotFoundException from "./exeption/productNotFound.exception";
+import { Injectable } from '@nestjs/common';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import Product from './product.entity';
+import ProductEntity from './product.entity';
+import ProductNotFoundException from './exeption/productNotFound.exception';
 
 @Injectable()
 export class ProductService {
-
   constructor(
     @InjectRepository(Product)
-    private productRepository: Repository<ProductEntity>
+    private productRepository: Repository<ProductEntity>,
   ) {}
 
   async create(createProductDto: CreateProductDto) {
@@ -25,7 +24,7 @@ export class ProductService {
 
   async findOne(id: number) {
     const product = await this.productRepository.findOne({
-      where: {id}
+      where: { id },
     });
     if (product) {
       return product;
