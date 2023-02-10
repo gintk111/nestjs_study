@@ -7,15 +7,13 @@ import {
   Req,
   Res,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import RegisterDto from './dto/register.dto';
-import { LocalAuthenticationGuard } from './localAuthentication.guard';
 import RequestWithUser from './requestWithUser.interface';
 import JwtAuthenticationGuard from './jwt-authentication.guard';
 import { Response } from 'express';
-import { TransformInterceptor } from '../common/transform.interceptor';
+import { LocalAuthGuard } from './localAuthentication.guard';
 
 @Controller('authentication')
 export class AuthenticationController {
@@ -27,12 +25,11 @@ export class AuthenticationController {
   }
 
   @HttpCode(200)
-  @UseGuards(LocalAuthenticationGuard)
+  @UseGuards(LocalAuthGuard)
   @Post('log-in')
   async logIn(@Req() request: RequestWithUser) {
     const { user } = request;
     const token = this.authenticationService.getJwtToken(user.id);
-    user.password = undefined;
     return { token };
   }
 
