@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import Product from './product.entity';
 import ProductNotFoundException from './exeption/productNotFound.exception';
+import { User } from "../user/user.entity";
 
 @Injectable()
 export class ProductService {
@@ -13,8 +14,13 @@ export class ProductService {
     private productRepository: Repository<Product>,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  async create(createProductDto: CreateProductDto, user: User) {
+    const product = {
+      title: createProductDto.title,
+      content: createProductDto.content,
+      user : user
+    }
+     return this.productRepository.create(product);
   }
 
   async findAll() {
